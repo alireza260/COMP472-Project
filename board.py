@@ -1,5 +1,7 @@
 import numpy as np
 
+visited_list = []
+
 print("board size:")
 boardSize = int(input())
 
@@ -39,11 +41,14 @@ def adjacent_nodes(y, x):
 
     return adjacency_list
 
+def visited_cells(y,x):
+
+    visited_list.append((y,x)) if (y,x) not in visited_list else visited_list
+
+    return visited_list
+
 
 print_array(random_matrix_array)
-
-print_array("-")
-
 
 count_white_cells = np.count_nonzero(random_matrix_array)
 
@@ -72,6 +77,7 @@ def flip_cell(y, x):
 
 
 while count_white_cells != number_of_cells:
+    print_array("-")
 
     print("choose y:")
     y = int(input())
@@ -88,6 +94,11 @@ while count_white_cells != number_of_cells:
         x = int(input())
 
     flip_cell(y, x)
+    print("adjacency cells: ")
+    print(adjacent_nodes(y, x))
+
+    print("visited cells: ")
+    print(visited_cells(y,x))
 else:
     print("Congratulations you have won!")
 
