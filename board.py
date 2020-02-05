@@ -1,6 +1,7 @@
 import numpy as np
 
 visited_list = []
+open_list = []
 
 print("board size:")
 boardSize = int(input())
@@ -52,6 +53,12 @@ print_array(random_matrix_array)
 
 number_of_cells = boardSize*boardSize
 
+def open_cells(adjacency_list):
+
+    open_list = [x for x in adjacency_list if x not in visited_list]
+
+    return open_list
+
 
 def flip_cell(y, x):
 
@@ -76,8 +83,10 @@ def flip_cell(y, x):
 def dfs():
 
     count_white_cells = 0
+    y=0
+    x=0
 
-    while count_white_cells != number_of_cells:
+    while count_white_cells != number_of_cells and open_cells(adjacent_nodes(y, x)) != []:
         print_array("-")
 
         print("choose y:")
@@ -104,10 +113,16 @@ def dfs():
         print("visited cells: ")
         print(visited_cells(y,x))
 
+        print("available cells: ")
+        print(open_cells(adjacent_nodes(y, x)))
+
         print("white cells ratio: ")
         print(count_white_cells , "/" , number_of_cells)
 
-    else:
+    if not open_cells(adjacent_nodes(y, x)):
+        print("There is no solution.")
+
+    elif count_white_cells == number_of_cells:
         print("Congratulations you have won!")
 
 dfs()
