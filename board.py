@@ -50,8 +50,6 @@ def visited_cells(y,x):
 
 print_array(random_matrix_array)
 
-count_white_cells = np.count_nonzero(random_matrix_array)
-
 number_of_cells = boardSize*boardSize
 
 
@@ -75,32 +73,46 @@ def flip_cell(y, x):
 
     print_array(random_matrix_array)
 
+def dfs():
 
-while count_white_cells != number_of_cells:
-    print_array("-")
+    count_white_cells = 0
 
-    print("choose y:")
-    y = int(input())
+    while count_white_cells != number_of_cells:
+        print_array("-")
 
-    while y < 0 or y > boardSize - 1:
         print("choose y:")
         y = int(input())
 
-    print("choose x:")
-    x = int(input())
+        while y < 0 or y > boardSize - 1:
+            print("choose y:")
+            y = int(input())
 
-    while x < 0 or x > boardSize - 1:
         print("choose x:")
         x = int(input())
 
-    flip_cell(y, x)
-    print("adjacency cells: ")
-    print(adjacent_nodes(y, x))
+        while x < 0 or x > boardSize - 1:
+            print("choose x:")
+            x = int(input())
 
-    print("visited cells: ")
-    print(visited_cells(y,x))
-else:
-    print("Congratulations you have won!")
+        flip_cell(y, x)
+
+        count_white_cells = np.count_nonzero(random_matrix_array)
+
+        print("adjacency cells: ")
+        print(adjacent_nodes(y, x))
+
+        print("visited cells: ")
+        print(visited_cells(y,x))
+
+        print("white cells ratio: ")
+        print(count_white_cells , "/" , number_of_cells)
+
+    else:
+        print("Congratulations you have won!")
+
+dfs()
+
+
 
 
 
