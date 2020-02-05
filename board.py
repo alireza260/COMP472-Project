@@ -12,6 +12,7 @@ elif boardSize>10:
 
 random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
 
+
 def print_array(random_matrix_array):
 
     for a in random_matrix_array:
@@ -19,17 +20,37 @@ def print_array(random_matrix_array):
             print("{}".format(elem).rjust(3), end="")
         print(end="\n")
 
+
+def adjacent_nodes(y, x):
+
+    adjacency_list = []
+
+    if y + 1 <= boardSize-1:
+        adjacency_list.append(random_matrix_array[y+1, x])
+
+    if y - 1 >= 0:
+        adjacency_list.append(random_matrix_array[y-1, x])
+
+    if x + 1 <= boardSize-1:
+        adjacency_list.append(random_matrix_array[y, x+1])
+
+    if x - 1 >=0:
+        adjacency_list.append(random_matrix_array[y, x-1])
+
+    return adjacency_list
+
+
 print_array(random_matrix_array)
 
 print_array("-")
-
 
 
 count_white_cells = np.count_nonzero(random_matrix_array)
 
 number_of_cells = boardSize*boardSize
 
-def flip_cell(y,x):
+
+def flip_cell(y, x):
 
     random_matrix_array[y,x] -=1
 
@@ -48,6 +69,7 @@ def flip_cell(y,x):
     random_matrix_array[random_matrix_array < 0] = 1
 
     print_array(random_matrix_array)
+
 
 while count_white_cells != number_of_cells:
 
