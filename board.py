@@ -26,16 +26,16 @@ def adjacent_nodes(y, x):
     adjacency_list = []
 
     if y + 1 <= boardSize-1:
-        adjacency_list.append(random_matrix_array[y+1, x])
-
-    if y - 1 >= 0:
-        adjacency_list.append(random_matrix_array[y-1, x])
+        adjacency_list.append((y+1, x))
 
     if x + 1 <= boardSize-1:
-        adjacency_list.append(random_matrix_array[y, x+1])
+        adjacency_list.append((y, x+1))
 
-    if x - 1 >=0:
-        adjacency_list.append(random_matrix_array[y, x-1])
+    if y - 1 >= 0:
+        adjacency_list.append((y-1, x))
+
+    if x - 1 >= 0:
+        adjacency_list.append((y, x-1))
 
     return adjacency_list
 
@@ -63,7 +63,7 @@ def flip_cell(y, x):
     if x + 1 <= boardSize-1:
         random_matrix_array[y, x+1] -= 1
 
-    if x - 1 >=0:
+    if x - 1 >= 0:
         random_matrix_array[y, x-1] -= 1
 
     random_matrix_array[random_matrix_array < 0] = 1
