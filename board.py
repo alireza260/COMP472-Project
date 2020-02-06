@@ -83,34 +83,17 @@ def flip_cell(y, x):
 def dfs():
 
     count_white_cells = 0
-    y=0
-    x=0
 
     next_cell_y = 0
     next_cell_x = 0
 
+    y = 0
+    x = 0
+
     while count_white_cells != number_of_cells and open_cells(adjacent_nodes(y, x)):
         print_array("-")
 
-        print("choose y:")
-        y = int(input())
-
-        while y < 0 or y > boardSize - 1:
-            print("choose y:")
-            y = int(input())
-
-        print("choose x:")
-        x = int(input())
-
-        while x < 0 or x > boardSize - 1:
-            print("choose x:")
-            x = int(input())
-
-
-
         flip_cell(next_cell_y,next_cell_x)
-
-
 
         count_white_cells = np.count_nonzero(random_matrix_array)
 
@@ -131,6 +114,10 @@ def dfs():
         next_cell_y = int(str(next_cell)[1])
 
         next_cell_x = int(str(next_cell)[4])
+
+        y = next_cell_y
+
+        x = next_cell_x
 
         print("next y:",next_cell_y, "next x:",next_cell_x)
 
