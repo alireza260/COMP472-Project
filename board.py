@@ -86,6 +86,9 @@ def dfs():
     y=0
     x=0
 
+    next_cell_y = 0
+    next_cell_x = 0
+
     while count_white_cells != number_of_cells and open_cells(adjacent_nodes(y, x)) != []:
         print_array("-")
 
@@ -103,7 +106,15 @@ def dfs():
             print("choose x:")
             x = int(input())
 
-        flip_cell(y, x)
+
+
+        flip_cell(next_cell_y,next_cell_x)
+
+        next_cell = [cell[0] for cell in open_cells(adjacent_nodes(y, x))]
+
+        next_cell_y = int(str(next_cell)[1])
+
+        next_cell_x = int(str(next_cell)[4])
 
         count_white_cells = np.count_nonzero(random_matrix_array)
 
@@ -118,6 +129,8 @@ def dfs():
 
         print("white cells ratio: ")
         print(count_white_cells , "/" , number_of_cells)
+
+        print(next_cell)
 
     if not open_cells(adjacent_nodes(y, x)):
         print("There is no solution.")
