@@ -1,6 +1,6 @@
 import numpy as np
 
-visited_list = []
+closed_list = []
 open_list = []
 
 print("board size:")
@@ -42,11 +42,11 @@ def adjacent_nodes(y, x):
 
     return adjacency_list
 
-def visited_cells(y,x):
+def closed_cells(y,x):
 
-    visited_list.append((y,x)) if (y,x) not in visited_list else visited_list
+    closed_list.append((y,x)) if (y,x) not in closed_list else closed_list
 
-    return visited_list
+    return closed_list
 
 
 print_array(random_matrix_array)
@@ -55,7 +55,7 @@ number_of_cells = boardSize*boardSize
 
 def open_cells(adjacency_list):
 
-    open_list = [x for x in adjacency_list if x not in visited_list]
+    open_list = [x for x in adjacency_list if x not in closed_list]
 
     return open_list
 
@@ -111,7 +111,7 @@ def dfs():
         print(adjacent_nodes(y, x))
 
         print("visited cells: ")
-        print(visited_cells(y,x))
+        print(closed_cells(y,x))
 
         print("available cells: ")
         print(open_cells(adjacent_nodes(y, x)))
@@ -126,16 +126,4 @@ def dfs():
         print("Congratulations you have won!")
 
 dfs()
-
-
-
-
-
-
-
-
-
-
-
-
 
