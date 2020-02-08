@@ -2,6 +2,7 @@ import numpy as np
 
 closed_list = []
 open_list = []
+available_history_list = []
 
 print("board size:")
 boardSize = int(input())
@@ -59,6 +60,12 @@ def open_cells(adjacency_list):
 
     return open_list
 
+def cells_available_history(adjacency_list):
+
+    available_history_list.append(adjacency_list)
+
+    return available_history_list
+
 
 def flip_cell(y, x):
 
@@ -105,6 +112,9 @@ def dfs():
 
         print("available cells: ")
         print(open_cells(adjacent_nodes(y, x)))
+
+        print("cells history:")
+        print(cells_available_history(adjacent_nodes(y, x)))
 
         print("white cells ratio: ")
         print(count_white_cells , "/" , number_of_cells)
