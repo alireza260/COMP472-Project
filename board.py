@@ -118,7 +118,7 @@ def dfs():
 
         flip_cell(next_cell_y,next_cell_x)
 
-        count_white_cells = np.count_nonzero(random_matrix_array)
+        count_white_cells = boardSize*boardSize - np.count_nonzero(random_matrix_array)
 
         print("adjacency cells: ")
         print(adjacent_nodes(y, x))
