@@ -25,9 +25,12 @@ def print_matrix(matrix):
     print(end="\n")
 
 
-def flip(board, row_index, col):
+def flip(board, move_history, row_index, col):
+    # Deep copy matrices
+    move_history_copy = [[tile for tile in row] for row in move_history]
     board_copy = [[tile for tile in row] for row in board]
 
+    move_history_copy[row_index][col] = True
     board_copy[row_index][col] ^= 1
 
     if col - 1 >= 0:
@@ -42,7 +45,7 @@ def flip(board, row_index, col):
     if row_index + 1 < n:
         board_copy[row_index + 1][col] ^= 1
 
-    return board_copy
+    return board_copy, move_history_copy
 
 
 def get_next_tile(row, col):
@@ -81,28 +84,28 @@ def determine_best(old, new):
                     return new
 
 
-def recur_dfs(board, row_index, col_index, depth):
+def recur_dfs(board, move_history, row_index, col_index, depth):
     """
     Returns None if no solution was found, or a tuple with:
     - the depth (i.e. number of moves + 1)
     - the solution steps: an array of tuples with: row, col, board matrix
     """
-    # Check board bounds and depth
-    if row_index >= n or col_index >= n or depth > max_d:  # "max_d is included"
+    # Check board bounds and depth and move history
+    if row_index >= n or col_index >= n or depth > max_d or move_history[row_index][col_index]:  # "max_d is included"
         return None
 
-    new_board = flip(board, row_index, col_index)
+    new_board, new_move_history = flip(board, move_history, row_index, col_index)
 
+    # Check for completion
     if not any(1 in row for row in new_board):
         return depth, [(row_index, col_index, new_board)]
 
     best = None
 
+    # Brute force check every spot on board
     for r_index, row in enumerate(new_board):
         for c_index, tile in enumerate(row):
-            if r_index == row_index and c_index == col_index:
-                continue
-            new = recur_dfs(new_board, r_index, c_index, depth + 1)
+            new = recur_dfs(new_board, new_move_history, r_index, c_index, depth + 1)
             best = determine_best(best, new)
 
     if best is None:
@@ -113,7 +116,8 @@ def recur_dfs(board, row_index, col_index, depth):
 
 
 def dfs(board):
-    return recur_dfs(board, 0, 0, 1)  # "root = 1"
+    empty_history = [x[:] for x in [[False] * n] * n]
+    return recur_dfs(board, empty_history, 0, 0, 1)  # "root = 1"
 
 
 print_matrix(og_board)  # TODO delete
@@ -121,12 +125,12 @@ print_matrix(og_board)  # TODO delete
 start = time.time()
 result = dfs(og_board)
 end = time.time()
-print(end - start)
+print("Seconds elapsed: " + str(end - start))
 
 if result is None:
     print("No solution")
 else:
     result_depth, result_steps = result
-    print(result_depth)
+    print("Final depth: " + str(result_depth))
     for i in reversed(result_steps):
         print_matrix(i[2])
