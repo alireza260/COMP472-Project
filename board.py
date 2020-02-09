@@ -4,8 +4,8 @@ closed_list = []
 open_list = []
 available_history_list = []
 
-print("board size:")
-boardSize = int(input())
+with open('input.txt') as input:
+    boardSize = int([line.split()[0] for line in input][0])
 
 if boardSize<3:
     boardSize=3
@@ -13,6 +13,8 @@ if boardSize<3:
 elif boardSize>10:
     boardSize=10
     print("board size adjusted to 10")
+
+print("board size: ", boardSize)
 
 random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
 
