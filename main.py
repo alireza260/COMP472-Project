@@ -65,7 +65,7 @@ def determine_best(old, new):
     if new is None:
         return old
 
-    # " the goal is to find the smallest number of moves to bring the board to its goal configuration"
+    # "the goal is to find the smallest number of moves to bring the board to its goal configuration"
     if old[0] < new[0]:
         return old
     if new[0] < old[0]:
@@ -102,7 +102,7 @@ def recur_dfs(board, move_history, row_index, col_index, depth):
 
     best = None
 
-    # Brute force check every spot on board
+    # Brute force recur to every spot on board
     for r_index, row in enumerate(new_board):
         for c_index, tile in enumerate(row):
             new = recur_dfs(new_board, new_move_history, r_index, c_index, depth + 1)
@@ -111,6 +111,7 @@ def recur_dfs(board, move_history, row_index, col_index, depth):
     if best is None:
         return None
 
+    # Add move to history
     best[1].append((row_index, col_index, new_board))
     return best
 
