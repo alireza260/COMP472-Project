@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 print("board size:")
 n = int(input())
@@ -117,7 +118,10 @@ def dfs(board):
 
 print_matrix(og_board)  # TODO delete
 
+start = time.time()
 result = dfs(og_board)
+end = time.time()
+print(end - start)
 
 if result is None:
     print("No solution")
