@@ -10,6 +10,14 @@ with open('input.txt') as input:
 with open('input.txt') as input:
     max_d = int([line.split()[1] for line in input][0])
 
+with open("input.txt") as input:
+    arrayInput = ([line.split()[2] for line in input][0])
+
+one_d_array = [c for c in str(arrayInput)]
+
+
+
+
 if boardSize<3:
     boardSize=3
     print("board size adjusted to 3")
@@ -17,10 +25,13 @@ elif boardSize>10:
     boardSize=10
     print("board size adjusted to 10")
 
-print("board size: ", boardSize)
+if (boardSize*boardSize != len(one_d_array)):
+    print("Warning: number of cells (", boardSize*boardSize,") and array length (", len(one_d_array),") do not match")
 
-random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
+random_matrix_array = np.reshape(one_d_array, (-1, boardSize)).astype(int)
 
+#change array to random instead of getting it from input file
+#random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
 
 def print_array(random_matrix_array):
 
