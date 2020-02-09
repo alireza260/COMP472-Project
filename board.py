@@ -7,6 +7,9 @@ available_history_list = []
 with open('input.txt') as input:
     boardSize = int([line.split()[0] for line in input][0])
 
+with open('input.txt') as input:
+    max_d = int([line.split()[1] for line in input][0])
+
 if boardSize<3:
     boardSize=3
     print("board size adjusted to 3")
