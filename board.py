@@ -1,14 +1,23 @@
 import numpy as np
 import time
 
+with open("output_solution.txt", "w"):
+    pass
+
+with open("output_search.txt", "w"):
+    pass
+
 with open('input.txt') as input:
     boardSize = int([line.split()[0] for line in input][0])
 
 with open('input.txt') as input:
     max_d = int([line.split()[1] for line in input][0])
 
+with open('input.txt') as input:
+    max_l = int([line.split()[2] for line in input][0])
+
 with open("input.txt") as input:
-    arrayInput = ([line.split()[2] for line in input][0])
+    arrayInput = ([line.split()[3] for line in input][0])
 
 one_d_array = [c for c in str(arrayInput)]
 
@@ -97,6 +106,8 @@ def determine_best(old, new):
                 if ele2 < ele1:
                     return new
 
+
+
 def recur_dfs(board, move_history, depth):
     """
     Returns None if no solution was found, or a tuple with:
@@ -123,6 +134,8 @@ def recur_dfs(board, move_history, depth):
 
             new = recur_dfs(new_board, new_move_history, depth + 1)
 
+
+
             if new is not None:
                 # Add move to solution path
                 new[1].append((row_index, col_index, new_board))
@@ -140,6 +153,7 @@ def dfs(board):
     empty_history = [x[:] for x in [[False] * boardSize] * boardSize]
     return recur_dfs(board, empty_history, 1)  # "root = 1"
 
+
 start = time.time()
 result = dfs(random_matrix_array)
 end = time.time()
@@ -148,11 +162,23 @@ print("Moves tried: " + str(total_moves_tried))
 
 print_array(random_matrix_array)
 
+
+
 if result is None:
     print("No solution")
+    with open("output_solution.txt", "w") as text_file:
+        print(f"\n There is no solution.", file=text_file)
 else:
+
     result_depth, result_steps = result
     print("Final depth: " + str(result_depth))
+
+    for i in result_steps:
+        with open("output_solution.txt", "a") as text_file:
+            print(f"\n{random_matrix_array}", file=text_file)
+
     for i in reversed(result_steps):
         print_array(i[2])
+
+
 
