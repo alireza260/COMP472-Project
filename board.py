@@ -1,10 +1,6 @@
 import numpy as np
 import time
 
-closed_list = []
-open_list = []
-available_history_list = []
-
 with open('input.txt') as input:
     boardSize = int([line.split()[0] for line in input][0])
 
@@ -32,8 +28,6 @@ random_matrix_array = np.reshape(one_d_array, (-1, boardSize)).astype(int)
 #random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
 
 total_moves_tried = 0
-
-number_of_cells = boardSize*boardSize
 
 def print_array(random_matrix_array):
 
