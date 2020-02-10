@@ -40,6 +40,11 @@ total_moves_tried = 0
 
 def print_array(random_matrix_array):
 
+    matrix = np.reshape(random_matrix_array, (-1, boardSize)).flatten()
+
+    with open("output_solution.txt", "a") as text_file:
+        print(f"\n{matrix}", file=text_file)
+
     for a in random_matrix_array:
         for elem in a:
             print("{}".format(elem).rjust(3), end="")
@@ -172,10 +177,6 @@ else:
 
     result_depth, result_steps = result
     print("Final depth: " + str(result_depth))
-
-    for i in result_steps:
-        with open("output_solution.txt", "a") as text_file:
-            print(f"\n{random_matrix_array}", file=text_file)
 
     for i in reversed(result_steps):
         print_array(i[2])
