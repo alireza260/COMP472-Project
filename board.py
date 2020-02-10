@@ -40,7 +40,7 @@ total_moves_tried = 0
 
 def print_array(random_matrix_array):
 
-    matrix = np.reshape(random_matrix_array, (-1, boardSize)).flatten()
+    matrix = str(np.reshape(random_matrix_array, (-1, boardSize)).flatten()).strip('[').strip(']')
 
     with open("output_solution.txt", "a") as text_file:
         print(f"\n{matrix}", file=text_file)
@@ -139,18 +139,14 @@ def recur_dfs(board, move_history, depth):
 
             new = recur_dfs(new_board, new_move_history, depth + 1)
 
-
-
-
-
             if new is not None:
                 # Add move to solution path
                 new[1].append((row_index, col_index, new_board))
 
-            new_matrix = np.reshape(new_board, (-1, boardSize)).flatten()
+            new_matrix = str(np.reshape(new_board, (-1, boardSize)).flatten()).strip('[').strip(']')
 
             with open("output_search.txt", "a") as text_file:
-                print(f"\n0 0 0 {new_matrix}", file=text_file)
+                print(f"\n0 0 0 | {new_matrix}", file=text_file)
 
             # Determine if this move is better than the other moves so far
             best = determine_best(best, new)
