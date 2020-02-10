@@ -1,60 +1,25 @@
+import builtins
 import numpy as np
 import time
 
-with open("output_solution.txt", "w"):
-    pass
 
-with open("output_search.txt", "w"):
-    pass
-
-with open('input.txt') as input:
-    boardSize = int([line.split()[0] for line in input][0])
-
-with open('input.txt') as input:
-    max_d = int([line.split()[1] for line in input][0])
-
-with open('input.txt') as input:
-    max_l = int([line.split()[2] for line in input][0])
-
-with open("input.txt") as input:
-    arrayInput = ([line.split()[3] for line in input][0])
-
-one_d_array = [c for c in str(arrayInput)]
-
-if boardSize<3:
-    boardSize=3
-    print("board size adjusted to 3")
-elif boardSize>10:
-    boardSize=10
-    print("board size adjusted to 10")
-
-if (boardSize*boardSize != len(one_d_array)):
-    print("Warning: number of cells (", boardSize*boardSize,") and array length (", len(one_d_array),") do not match")
-
-random_matrix_array = np.reshape(one_d_array, (-1, boardSize)).astype(int)
-
-#change array to random instead of getting it from input file
-#random_matrix_array = np.random.randint(2,size=(boardSize,boardSize))
-
-total_moves_tried = 0
-
-def print_array(random_matrix_array):
-
-    matrix = str(np.reshape(random_matrix_array, (-1, boardSize)).flatten()).strip('[').strip(']')
-
-    with open("output_solution.txt", "a") as text_file:
-        print(f"\n{matrix}", file=text_file)
-
-    for a in random_matrix_array:
-        for elem in a:
-            print("{}".format(elem).rjust(3), end="")
+def print_matrix(matrix):
+    for arr in matrix:
+        for ele in arr:
+            print("{}".format(ele).rjust(3), end="")
         print(end="\n")
     print(end="\n")
 
-def flip(board, move_history, row_index, col):
 
+def flatten_matrix(matrix):
+    return ''.join(map(str, np.array(matrix).flatten()))
+
+
+def flip(board, move_history, row_index, col):
     global total_moves_tried
     total_moves_tried += 1
+
+    states.append(flatten_matrix(board))
 
     # Deep copy matrices
     move_history_copy = [[tile for tile in row] for row in move_history]
@@ -66,25 +31,27 @@ def flip(board, move_history, row_index, col):
     if col - 1 >= 0:
         board_copy[row_index][col - 1] ^= 1
 
-    if col + 1 < boardSize:
+    if col + 1 < n:
         board_copy[row_index][col + 1] ^= 1
 
     if row_index - 1 >= 0:
         board_copy[row_index - 1][col] ^= 1
 
-    if row_index + 1 < boardSize:
+    if row_index + 1 < n:
         board_copy[row_index + 1][col] ^= 1
 
     return board_copy, move_history_copy
 
+
 def get_next_tile(row, col):
-    if col + 1 >= boardSize:
+    if col + 1 >= n:
         row += 1
         col = 0
     else:
         col += 1
 
     return row, col
+
 
 def determine_best(old, new):
     if old is None:
@@ -112,7 +79,6 @@ def determine_best(old, new):
                     return new
 
 
-
 def recur_dfs(board, move_history, depth):
     """
     Returns None if no solution was found, or a tuple with:
@@ -129,8 +95,8 @@ def recur_dfs(board, move_history, depth):
     best = None
 
     # Brute force recur to every spot on board
-    for row_index in range(boardSize):
-        for col_index in range(boardSize):
+    for row_index in range(n):
+        for col_index in range(n):
             # Check move history
             if move_history[row_index][col_index]:
                 continue
@@ -143,11 +109,6 @@ def recur_dfs(board, move_history, depth):
                 # Add move to solution path
                 new[1].append((row_index, col_index, new_board))
 
-            new_matrix = str(np.reshape(new_board, (-1, boardSize)).flatten()).strip('[').strip(']')
-
-            with open("output_search.txt", "a") as text_file:
-                print(f"\n0 0 0 | {new_matrix}", file=text_file)
-
             # Determine if this move is better than the other moves so far
             best = determine_best(best, new)
 
@@ -158,31 +119,52 @@ def recur_dfs(board, move_history, depth):
 
 
 def dfs(board):
-    empty_history = [x[:] for x in [[False] * boardSize] * boardSize]
+    empty_history = [x[:] for x in [[False] * n] * n]
     return recur_dfs(board, empty_history, 1)  # "root = 1"
 
 
-start = time.time()
-result = dfs(random_matrix_array)
-end = time.time()
-print("Seconds elapsed: " + str(end - start))
-print("Moves tried: " + str(total_moves_tried))
+# Start program
+print("Enter input file path: ")
+input_path = input()
+print()
 
-print_array(random_matrix_array)
+with open(input_path) as input_file:
+    for puzzle_index, line in builtins.enumerate(input_file):
+        n, max_d, max_l, board_line = map(int, line.split())
 
+        one_d_array = [c for c in str(board_line)]
+        og_board = np.reshape(one_d_array, (-1, n)).astype(int)
 
+        states = []
+        total_moves_tried = 0
 
-if result is None:
-    print("No solution")
-    with open("output_solution.txt", "w") as text_file:
-        print(f"\n There is no solution.", file=text_file)
-else:
+        print("Puzzle:", puzzle_index, " max_d:", max_d)
+        print_matrix(og_board)
 
-    result_depth, result_steps = result
-    print("Final depth: " + str(result_depth))
+        start = time.time()
+        result = dfs(og_board)
+        end = time.time()
 
-    for i in reversed(result_steps):
-        print_array(i[2])
+        print("Seconds elapsed:", end - start)
+        print("Moves tried:", total_moves_tried)
 
+        with open(str(puzzle_index) + "_dfs_solution.txt", "w") as dfs_solution_file:
+            if result is None:
+                print("no solution")
+                dfs_solution_file.write("no solution")
+            else:
+                result_depth, result_moves = result
+                print("Final depth:", result_depth)
 
+                dfs_solution_file.write("0 " + str(flatten_matrix(og_board)) + "\n")
 
+                for move in reversed(result_moves):
+                    r, c, m = move
+                    dfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
+                    print_matrix(m)
+
+        with open(str(puzzle_index) + "_dfs_search.txt", "w") as dfs_search_file:
+            for state in states:
+                dfs_search_file.write("0 0 0 " + state + "\n")
+
+        print()
