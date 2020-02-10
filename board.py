@@ -141,9 +141,16 @@ def recur_dfs(board, move_history, depth):
 
 
 
+
+
             if new is not None:
                 # Add move to solution path
                 new[1].append((row_index, col_index, new_board))
+
+            new_matrix = np.reshape(new_board, (-1, boardSize)).flatten()
+
+            with open("output_search.txt", "a") as text_file:
+                print(f"\n0 0 0 {new_matrix}", file=text_file)
 
             # Determine if this move is better than the other moves so far
             best = determine_best(best, new)
