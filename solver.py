@@ -2,6 +2,7 @@ import builtins
 import numpy as np
 import time
 
+
 def print_matrix(matrix):
     for arr in matrix:
         for ele in arr:
@@ -10,9 +11,15 @@ def print_matrix(matrix):
     print(end="\n")
 
 
+def flatten_matrix(matrix):
+    return ''.join(map(str, np.array(matrix).flatten()))
+
+
 def flip(board, move_history, row_index, col):
     global total_moves_tried
     total_moves_tried += 1
+
+    states.append(flatten_matrix(board))
 
     # Deep copy matrices
     move_history_copy = [[tile for tile in row] for row in move_history]
@@ -128,6 +135,7 @@ with open(input_path) as input_file:
         one_d_array = [c for c in str(board_line)]
         og_board = np.reshape(one_d_array, (-1, n)).astype(int)
 
+        states = []
         total_moves_tried = 0
 
         print("Puzzle:", puzzle_index, " max_d:", max_d)
@@ -148,13 +156,15 @@ with open(input_path) as input_file:
                 result_depth, result_moves = result
                 print("Final depth:", result_depth)
 
-                flat_board = ''.join(map(str, np.array(og_board).flatten()))
-                dfs_solution_file.write("0 " + str(flat_board) + "\n")
+                dfs_solution_file.write("0 " + str(flatten_matrix(og_board)) + "\n")
 
                 for move in reversed(result_moves):
                     r, c, m = move
-                    flat_m = ''.join(map(str, np.array(m).flatten()))
-                    dfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flat_m) + "\n")
-                    print_matrix(move[2])
+                    dfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
+                    print_matrix(m)
+
+        with open(str(puzzle_index) + "_dfs_search.txt", "w") as dfs_search_file:
+            for state in states:
+                dfs_search_file.write("0 0 0 " + state + "\n")
 
         print()
