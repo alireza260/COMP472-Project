@@ -2,6 +2,7 @@ import builtins
 import numpy as np
 import time
 
+closed_list = []
 
 def print_matrix(matrix):
     for arr in matrix:
@@ -14,6 +15,12 @@ def print_matrix(matrix):
 def flatten_matrix(matrix):
     return ''.join(map(str, np.array(matrix).flatten()))
 
+
+def closed_cells(move):
+
+    closed_list.append(move) if (move) not in closed_list else closed_list
+
+    return closed_list
 
 def flip(board, move_history, row_index, col):
     global total_moves_tried
@@ -161,6 +168,31 @@ with open(input_path) as input_file:
 
                 for move in reversed(result_moves):
                     r, c, m = move
+
+                    adjacency_list = []
+
+                    if c - 1 >= 0:
+                        adjacency_list.append(chr(ord('A') + r) + str(c))
+
+                    if c + 1 < n:
+                        adjacency_list.append(chr(ord('A') + r) + str(c+2))
+
+                    if r - 1 >= 0:
+                        adjacency_list.append(chr(ord('A') + r - 1) + str(c+1))
+
+                    if r + 1 < n:
+                        adjacency_list.append(chr(ord('A') + r + 1) + str(c+1))
+
+
+                    open_list = []
+                    open_list = [x for x in adjacency_list if x not in closed_list]
+
+                    print("closed cells: ", closed_cells(chr(ord('A') + r) + str(c + 1)))
+                    print("open cells: ", open_list)
+
+                    count_white_cells = np.count_nonzero(m)
+                    print("black cells remaining: ", count_white_cells)
+
                     dfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
                     print_matrix(m)
 
