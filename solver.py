@@ -22,15 +22,6 @@ def closed_cells(move):
 
     return closed_list
 
-def open_cells(matrix,open_list):
-
-    for i, r in enumerate(matrix):
-        open_list.append(r)
-
-    #open_list = [x for x in matrix.tolist() if x not in closed_list]
-
-    return open_list
-
 def flip(board, move_history, row_index, col):
     global total_moves_tried
     total_moves_tried += 1
