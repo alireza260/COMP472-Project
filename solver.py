@@ -22,8 +22,8 @@ def flip(board, move_history, row_index, col):
     states.append(flatten_matrix(board))
 
     # Deep copy matrices
-    move_history_copy = [[tile for tile in row] for row in move_history]
-    board_copy = [[tile for tile in row] for row in board]
+    move_history_copy = np.matrix.copy(move_history)
+    board_copy = np.matrix.copy(board)
 
     move_history_copy[row_index][col] = True
     board_copy[row_index][col] ^= 1
@@ -86,7 +86,7 @@ def recur_dfs(board, move_history, depth):
     - the solution steps: an array of tuples with: row, col, board matrix
     """
     # Check for completion
-    if not any(1 in row for row in board):
+    if board.sum() == 0:
         return depth, []
 
     if depth == max_d:  # "max_d is included"
@@ -102,12 +102,13 @@ def recur_dfs(board, move_history, depth):
                 continue
 
             new_board, new_move_history = flip(board, move_history, row_index, col_index)
-
             new = recur_dfs(new_board, new_move_history, depth + 1)
 
-            if new is not None:
-                # Add move to solution path
-                new[1].append((row_index, col_index, new_board))
+            if new is None:
+                continue
+
+            # Add move to solution path
+            new[1].append((row_index, col_index, new_board))
 
             # Determine if this move is better than the other moves so far
             best = determine_best(best, new)
@@ -119,7 +120,7 @@ def recur_dfs(board, move_history, depth):
 
 
 def dfs(board):
-    empty_history = [x[:] for x in [[False] * n] * n]
+    empty_history = np.full((n, n), False)
     return recur_dfs(board, empty_history, 1)  # "root = 1"
 
 
@@ -130,10 +131,10 @@ print()
 
 with open(input_path) as input_file:
     for puzzle_index, line in builtins.enumerate(input_file):
-        n, max_d, max_l, board_line = map(int, line.split())
+        split_line = line.split()
+        n, max_d, max_l = map(int, split_line[:-1])
 
-        one_d_array = [c for c in str(board_line)]
-        og_board = np.reshape(one_d_array, (-1, n)).astype(int)
+        og_board = np.array(list(split_line[-1])).astype(int).reshape((-1, n))
 
         states = []
         total_moves_tried = 0
