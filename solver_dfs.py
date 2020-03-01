@@ -190,7 +190,8 @@ with open(input_path) as input_file:
                     print("closed cells: ", closed_cells(chr(ord('A') + r) + str(c + 1)))
                     print("open cells: ", open_list)
 
-
+                    count_white_cells = np.count_nonzero(m)
+                    print("black cells remaining: ", count_white_cells)
 
                     dfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
                     print_matrix(m)

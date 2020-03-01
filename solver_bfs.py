@@ -116,7 +116,6 @@ def recur_dfs(board, move_history, depth):
                 # Add move to solution path
                 new[1].append((row_index, col_index, new_board))
 
-
             # Determine if this move is better than the other moves so far
             best = determine_best(best, new)
 
@@ -172,16 +171,16 @@ with open(input_path) as input_file:
                     adjacency_list = []
 
                     if c - 1 >= 0:
-                        adjacency_list.append(chr(ord('A') + r) + str(c))
+                        adjacency_list.append((r,c))
 
                     if c + 1 < n:
-                        adjacency_list.append(chr(ord('A') + r) + str(c+2))
+                        adjacency_list.append((r,c+2))
 
                     if r - 1 >= 0:
-                        adjacency_list.append(chr(ord('A') + r - 1) + str(c+1))
+                        adjacency_list.append((r-1,c+1))
 
                     if r + 1 < n:
-                        adjacency_list.append(chr(ord('A') + r + 1) + str(c+1))
+                        adjacency_list.append((r+1,c+1))
 
 
                     open_list = []
@@ -190,6 +189,8 @@ with open(input_path) as input_file:
                     print("closed cells: ", closed_cells(chr(ord('A') + r) + str(c + 1)))
                     print("open cells: ", open_list)
 
+                    count_white_cells = np.count_nonzero(m)
+                    print("black cells remaining: ", count_white_cells)
 
 
                     bfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
