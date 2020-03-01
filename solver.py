@@ -49,17 +49,6 @@ def flip(board, move_history, row_index, col):
 
     return board_copy, move_history_copy
 
-
-def get_next_tile(row, col):
-    if col + 1 >= n:
-        row += 1
-        col = 0
-    else:
-        col += 1
-
-    return row, col
-
-
 def determine_best(old, new):
     if old is None:
         return new
