@@ -75,7 +75,7 @@ def determine_best(old, new):
                     return new
 
 
-def recur_bfs(board, move_history, path_length):
+def recur_a_algo(board, move_history, path_length):
     """
     Returns None if no solution was found, or a tuple with:
     - the path_length (i.e. number of moves + 1)
@@ -85,7 +85,7 @@ def recur_bfs(board, move_history, path_length):
     if board.sum() == 0:
         return path_length, []
 
-    if path_length == max_l:  # "max_d is included"
+    if path_length == max_d:  # "max_d is included"
         return None
 
     best = None
@@ -106,10 +106,10 @@ def recur_bfs(board, move_history, path_length):
             continue
         # flip each element, getting the row and column value from the list
         new_board, new_move_history = flip(board, move_history, x[0], x[1])
-        new = recur_bfs(new_board, new_move_history, path_length + 1)
+        new = recur_a_algo(new_board, new_move_history, path_length + 1)
         # append the black cell count toi each element in the open_list
         count_bc = np.count_nonzero(new_board)
-        x = + (count_bc)
+        x = + (count_bc + path_length)
         # sort open_list according to the 3rd index of each element, which is the appended value
         open_list.sort(key=lambda x: x[2])
 
@@ -126,9 +126,9 @@ def recur_bfs(board, move_history, path_length):
     return best
 
 
-def bfs(board):
+def a_algo(board):
     empty_history = np.full((n, n), False)
-    return recur_bfs(board, empty_history, 1)  # "root = 1"
+    return recur_a_algo(board, empty_history, 1)  # "root = 1"
 
 
 # Start program
@@ -146,25 +146,25 @@ with open(input_path) as input_file:
         states = []
         total_moves_tried = 0
 
-        print("Puzzle:", puzzle_index, " max_l:", max_l)
+        print("Puzzle:", puzzle_index, " max_d:", max_d)
         print_matrix(og_board)
 
         start = time.time()
-        result = bfs(og_board)
+        result = a_algo(og_board)
         end = time.time()
 
         print("Seconds elapsed:", end - start)
         print("Moves tried:", total_moves_tried)
 
-        with open(str(puzzle_index) + "_bfs_solution.txt", "w") as bfs_solution_file:
+        with open(str(puzzle_index) + "_a_algo_solution.txt", "w") as a_algo_solution_file:
             if result is None:
                 print("no solution")
-                bfs_solution_file.write("no solution")
+                a_algo_solution_file.write("no solution")
             else:
                 result_path_length, result_moves = result
                 print("Final path length:", result_path_length)
 
-                bfs_solution_file.write("0 " + str(flatten_matrix(og_board)) + "\n")
+                a_algo_solution_file.write("0 " + str(flatten_matrix(og_board)) + "\n")
 
                 for move in reversed(result_moves):
                     r, c, m = move
@@ -175,11 +175,11 @@ with open(input_path) as input_file:
                     count_black_cells = np.count_nonzero(m)
                     print("black cells remaining: ", count_black_cells)
 
-                    bfs_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
+                    a_algo_solution_file.write(chr(ord('A') + r) + str(c + 1) + " " + str(flatten_matrix(m)) + "\n")
                     print_matrix(m)
 
-        with open(str(puzzle_index) + "_bfs_search.txt", "w") as bfs_search_file:
+        with open(str(puzzle_index) + "_a_algo_search.txt", "w") as a_algo_search_file:
             for state in states:
-                bfs_search_file.write("0 0 0 " + state + "\n")
+                a_algo_search_file.write("0 0 0 " + state + "\n")
 
         print()
