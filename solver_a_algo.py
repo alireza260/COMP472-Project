@@ -107,7 +107,7 @@ def recur_a_algo(board, move_history, path_length):
         # flip each element, getting the row and column value from the list
         new_board, new_move_history = flip(board, move_history, x[0], x[1])
         new = recur_a_algo(new_board, new_move_history, path_length + 1)
-        # append the black cell count toi each element in the open_list
+        # append the black cell count + path length value to each element in the open_list
         count_bc = np.count_nonzero(new_board)
         x = + (count_bc + path_length)
         # sort open_list according to the 3rd index of each element, which is the appended value
