@@ -18,13 +18,25 @@ nb_of_tweets_testing = 0
 accuracy_score = 0
 
 
+print("v value:")
+v = int(input())
+
 def pre_process_tweets(tweet):
     tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
     tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
     tweet = re.sub(r'#([^\s]+)', '', tweet)  # remove the # in #hashtag
-    tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
-    tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '', tweet) # remove certain special characters
-    tweet = re.sub(r'\w*\d\w*', '', tweet) # remove strings containing numbers
+
+    if v == 2:
+        tweet = ''.join(c if c.isalpha() else ' ' for c in tweet) # isalpha
+
+    elif v == 1 or v == 0:
+        tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
+        tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '', tweet)  # remove certain special characters
+        tweet = re.sub(r'\w*\d\w*', '', tweet)  # remove strings containing numbers
+        if v == 0:
+            tweet = tweet.lower()  # transform all characters to lowercase
+
+
     tweet = word_tokenize(tweet)  # separate into individual words
     return tweet
 
