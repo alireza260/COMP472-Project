@@ -10,6 +10,13 @@ spanish_v = []
 english_v = []
 portugese_v = []
 
+basque_c = catalan_c = galician_c = spanish_c = english_c = portugese_c = 0
+
+nb_of_tweets = 0
+nb_of_tweets_testing = 0
+
+accuracy_score = 0
+
 
 def pre_process_tweets(tweet):
     tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
@@ -29,34 +36,50 @@ def trunc_at_language(s, d, n):
     strlist = ""
     return strlist.join(s.split(d)[n])
 
-
-
 with open('training-tweets.txt', encoding="utf8") as training_file:
     for line in training_file:
         message = str(line)
+
+        #count number of tweets in testing file
+        nb_of_tweets += 1
+
         # if tweet is in basque
         if trunc_at_language(message, "	", 2) == "eu":
+            basque_c += 1
             basque_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
             # if tweet is in catalan
         elif trunc_at_language(message, "	", 2) == "ca":
+            catalan_c += 1
             catalan_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
             # if tweet is in galician
         elif trunc_at_language(message, "	", 2) == "gl":
+            galician_c += 1
             galician_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
             # if tweet is in spanish
         elif trunc_at_language(message, "	", 2) == "es":
+            spanish_c += 1
             spanish_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
             # if tweet is in english
         elif trunc_at_language(message, "	", 2) == "en":
+            english_c += 1
             english_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
             # if tweet is in portugese
         elif trunc_at_language(message, "	", 2) == "pt":
+            portugese_c += 1
             portugese_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
+
+    #set prior probability values
+    basque_prior = np.log10(basque_c / nb_of_tweets)
+    catalan_prior = np.log10(catalan_c / nb_of_tweets)
+    galician_prior = np.log10(galician_c / nb_of_tweets)
+    spanish_prior = np.log10(spanish_c / nb_of_tweets)
+    english_prior = np.log10(english_c / nb_of_tweets)
+    portugese_prior = np.log10(portugese_c / nb_of_tweets)
 
 def calc_language_prob(vocabulary, t_element):
 
@@ -67,7 +90,15 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
         correct_l = trunc_at_language(str(line), "	", 2)
         message = pre_process_tweets(trunc_at_tweet(str(line), "	", 3))
 
-        basque_prob = catalan_prob = galician_prob = spanish_prob = english_prob = portugese_prob = 0
+        # count number of tweets in testing file
+        nb_of_tweets_testing += 1
+
+        basque_prob = basque_prior
+        catalan_prob = catalan_prior
+        galician_prob = galician_prior
+        spanish_prob = spanish_prior
+        english_prob = english_prior
+        portugese_prob = portugese_prior
 
         for x in message:
             basque_prob += calc_language_prob(basque_v, x)
@@ -81,24 +112,29 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
         if most_probable_l == basque_prob:
             print(correct_l, ": eu")
+            if correct_l == "eu":
+                accuracy_score += 1
         elif most_probable_l == catalan_prob:
             print(correct_l, ": ca")
+            if correct_l == "ca":
+                accuracy_score += 1
         elif most_probable_l == galician_prob:
             print(correct_l, ": gl")
+            if correct_l == "gl":
+                accuracy_score += 1
         elif most_probable_l == spanish_prob:
             print(correct_l, ": es")
+            if correct_l == "es":
+                accuracy_score += 1
         elif most_probable_l == english_prob:
             print(correct_l, ": en")
+            if correct_l == "en":
+                accuracy_score += 1
         elif most_probable_l == portugese_prob:
             print(correct_l, ": pt")
-
-
-
-
-
-
-
-
+            if correct_l == "pt":
+                accuracy_score += 1
+        print("score: ", accuracy_score, "/ ", nb_of_tweets_testing)
 
 #print("basque vocabulary: ",basque_v)
 #print("catalan vocabulary: ", catalan_v)
