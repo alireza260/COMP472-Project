@@ -17,23 +17,33 @@ nb_of_tweets_testing = 0
 
 accuracy_score = 0
 
+print("vocabulary value (0,1 or 2):")
+voc_value = int(input())
 
-print("v value:")
-v = int(input())
+while voc_value < 0 or voc_value > 2:
+    print("v value (0,1 or 2):")
+    voc_value = int(input())
+
+print("smoothing value (between 0 and 1):")
+smoothing_value = float(input())
+
+while smoothing_value < 0 or smoothing_value > 1:
+    print("smoothing value (between 0 and 1):")
+    smoothing_value = float(input())
 
 def pre_process_tweets(tweet):
     tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
     tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
     tweet = re.sub(r'#([^\s]+)', '', tweet)  # remove the # in #hashtag
 
-    if v == 2:
+    if voc_value == 2:
         tweet = ''.join(c if c.isalpha() else ' ' for c in tweet) # isalpha
 
-    elif v == 1 or v == 0:
+    elif voc_value == 1 or voc_value == 0:
         tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
         tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '', tweet)  # remove certain special characters
         tweet = re.sub(r'\w*\d\w*', '', tweet)  # remove strings containing numbers
-        if v == 0:
+        if voc_value == 0:
             tweet = tweet.lower()  # transform all characters to lowercase
 
 
@@ -97,7 +107,7 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
 
 def calc_language_prob(vocabulary, t_element, total_v):
 
-    return np.log10((vocabulary.count(t_element)) / (len(vocabulary) + len(total_v)))
+    return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_v)))
 
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     for line in testing_file:
