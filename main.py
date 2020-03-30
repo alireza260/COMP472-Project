@@ -1,5 +1,6 @@
 import numpy as np
 from nltk.tokenize import word_tokenize
+from collections import Counter
 import string
 import re
 
@@ -95,6 +96,7 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
             portugese_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
     total_v = basque_v + catalan_v + galician_v + spanish_v + english_v + portugese_v
+    total_unique = Counter(total_v)
 
     #set prior probability values
     basque_prior = np.log10(basque_c / nb_of_tweets)
@@ -104,9 +106,9 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
     english_prior = np.log10(english_c / nb_of_tweets)
     portugese_prior = np.log10(portugese_c / nb_of_tweets)
 
-def calc_language_prob(vocabulary, t_element, total_v):
+def calc_language_prob(vocabulary, t_element, total_unique):
 
-    return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_v)))
+    return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
 
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     for line in testing_file:
@@ -124,12 +126,12 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
         portugese_prob = portugese_prior
 
         for x in message:
-            basque_prob += calc_language_prob(basque_v, x, total_v)
-            catalan_prob += calc_language_prob(catalan_v, x, total_v)
-            galician_prob += calc_language_prob(galician_v, x, total_v)
-            spanish_prob += calc_language_prob(spanish_v, x, total_v)
-            english_prob += calc_language_prob(english_v, x, total_v)
-            portugese_prob += calc_language_prob(portugese_v, x, total_v)
+            basque_prob += calc_language_prob(basque_v, x, total_unique)
+            catalan_prob += calc_language_prob(catalan_v, x, total_unique)
+            galician_prob += calc_language_prob(galician_v, x, total_unique)
+            spanish_prob += calc_language_prob(spanish_v, x, total_unique)
+            english_prob += calc_language_prob(english_v, x, total_unique)
+            portugese_prob += calc_language_prob(portugese_v, x, total_unique)
 
         most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
