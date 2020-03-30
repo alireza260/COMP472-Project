@@ -34,7 +34,6 @@ while smoothing_value < 0 or smoothing_value > 1:
 def pre_process_tweets(tweet):
     tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
     tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
-    tweet = re.sub(r'#([^\s]+)', '', tweet)  # remove the # in #hashtag
 
     if voc_value == 2:
         tweet = ''.join(c if c.isalpha() else ' ' for c in tweet) # isalpha
