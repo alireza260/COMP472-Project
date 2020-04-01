@@ -1,4 +1,5 @@
 import nltk
+import os
 import numpy as np
 from nltk.tokenize import word_tokenize
 from collections import Counter
@@ -169,6 +170,11 @@ def calc_language_prob(vocabulary, t_element, total_unique):
 
     return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
 
+# if trace file already exists, wipe the data before appending new data
+if os.path.exists("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
+    with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as trace_output_file:
+        trace_output_file.write("")
+
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     try:
         for line in testing_file:
@@ -197,36 +203,40 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
-            if most_probable_l == basque_prob:
-                if correct_l == "eu":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "eu", most_probable_l,correct_l, right_or_wrong_a)
-            elif most_probable_l == catalan_prob:
-                if correct_l == "ca":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "ca", most_probable_l, correct_l, right_or_wrong_a)
-            elif most_probable_l == galician_prob:
-                if correct_l == "gl":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "gl", most_probable_l, correct_l, right_or_wrong_a)
-            elif most_probable_l == spanish_prob:
-                if correct_l == "es":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "es", most_probable_l, correct_l, right_or_wrong_a)
-            elif most_probable_l == english_prob:
-                if correct_l == "en":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "en", most_probable_l, correct_l, right_or_wrong_a)
-            elif most_probable_l == portugese_prob:
-                if correct_l == "pt":
-                    accuracy_score += 1
-                    right_or_wrong_a = "correct"
-                print(tweet_ID, "pt", most_probable_l, correct_l, right_or_wrong_a)
+            with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as trace_output_file:
+
+                if most_probable_l == basque_prob:
+                    if correct_l == "eu":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  eu  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+                elif most_probable_l == catalan_prob:
+                    if correct_l == "ca":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  ca  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+                elif most_probable_l == galician_prob:
+                    if correct_l == "gl":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  gl  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+                elif most_probable_l == spanish_prob:
+                    if correct_l == "es":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  es  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+                elif most_probable_l == english_prob:
+                    if correct_l == "en":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  en  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+                elif most_probable_l == portugese_prob:
+                    if correct_l == "pt":
+                        accuracy_score += 1
+                        right_or_wrong_a = "correct"
+                    trace_output_file.write(tweet_ID + "  pt  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+
+                print(nb_of_tweets_testing)
 
     except (IndexError):
         pass
