@@ -170,55 +170,68 @@ def calc_language_prob(vocabulary, t_element, total_unique):
     return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
 
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
-    for line in testing_file:
-        correct_l = trunc_at_language(str(line), "	", 2)
-        message = pre_process_tweets(trunc_at_tweet(str(line), "	", 3))
+    try:
+        for line in testing_file:
+            right_or_wrong_a = "wrong"
+            correct_l = trunc_at_language(str(line), "	", 2)
+            tweet_ID = trunc_at_language(str(line), "	", 0)
+            message = pre_process_tweets(trunc_at_tweet(str(line), "	", 3))
 
-        # count number of tweets in testing file
-        nb_of_tweets_testing += 1
+            # count number of tweets in testing file
+            nb_of_tweets_testing += 1
 
-        basque_prob = basque_prior
-        catalan_prob = catalan_prior
-        galician_prob = galician_prior
-        spanish_prob = spanish_prior
-        english_prob = english_prior
-        portugese_prob = portugese_prior
+            basque_prob = basque_prior
+            catalan_prob = catalan_prior
+            galician_prob = galician_prior
+            spanish_prob = spanish_prior
+            english_prob = english_prior
+            portugese_prob = portugese_prior
 
-        for x in message:
-            basque_prob += calc_language_prob(basque_v, x, total_unique)
-            catalan_prob += calc_language_prob(catalan_v, x, total_unique)
-            galician_prob += calc_language_prob(galician_v, x, total_unique)
-            spanish_prob += calc_language_prob(spanish_v, x, total_unique)
-            english_prob += calc_language_prob(english_v, x, total_unique)
-            portugese_prob += calc_language_prob(portugese_v, x, total_unique)
+            for x in message:
+                basque_prob += calc_language_prob(basque_v, x, total_unique)
+                catalan_prob += calc_language_prob(catalan_v, x, total_unique)
+                galician_prob += calc_language_prob(galician_v, x, total_unique)
+                spanish_prob += calc_language_prob(spanish_v, x, total_unique)
+                english_prob += calc_language_prob(english_v, x, total_unique)
+                portugese_prob += calc_language_prob(portugese_v, x, total_unique)
 
-        most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
+            most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
-        if most_probable_l == basque_prob:
-            print(correct_l, ": eu")
-            if correct_l == "eu":
-                accuracy_score += 1
-        elif most_probable_l == catalan_prob:
-            print(correct_l, ": ca")
-            if correct_l == "ca":
-                accuracy_score += 1
-        elif most_probable_l == galician_prob:
-            print(correct_l, ": gl")
-            if correct_l == "gl":
-                accuracy_score += 1
-        elif most_probable_l == spanish_prob:
-            print(correct_l, ": es")
-            if correct_l == "es":
-                accuracy_score += 1
-        elif most_probable_l == english_prob:
-            print(correct_l, ": en")
-            if correct_l == "en":
-                accuracy_score += 1
-        elif most_probable_l == portugese_prob:
-            print(correct_l, ": pt")
-            if correct_l == "pt":
-                accuracy_score += 1
-        print("score: ", accuracy_score, "/ ", nb_of_tweets_testing)
+            if most_probable_l == basque_prob:
+                if correct_l == "eu":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "eu", most_probable_l,correct_l, right_or_wrong_a)
+            elif most_probable_l == catalan_prob:
+                if correct_l == "ca":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "ca", most_probable_l, correct_l, right_or_wrong_a)
+            elif most_probable_l == galician_prob:
+                if correct_l == "gl":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "gl", most_probable_l, correct_l, right_or_wrong_a)
+            elif most_probable_l == spanish_prob:
+                if correct_l == "es":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "es", most_probable_l, correct_l, right_or_wrong_a)
+            elif most_probable_l == english_prob:
+                if correct_l == "en":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "en", most_probable_l, correct_l, right_or_wrong_a)
+            elif most_probable_l == portugese_prob:
+                if correct_l == "pt":
+                    accuracy_score += 1
+                    right_or_wrong_a = "correct"
+                print(tweet_ID, "pt", most_probable_l, correct_l, right_or_wrong_a)
+
+    except (IndexError):
+        pass
+
+    print("score:", accuracy_score, "/", nb_of_tweets_testing)
 
 #print("basque vocabulary: ",basque_v)
 #print("catalan vocabulary: ", catalan_v)
