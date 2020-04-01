@@ -1,3 +1,4 @@
+import nltk
 import numpy as np
 from nltk.tokenize import word_tokenize
 from collections import Counter
@@ -25,6 +26,13 @@ while voc_value < 0 or voc_value > 2:
     print("v value (0,1 or 2):")
     voc_value = int(input())
 
+print("size of n-grams (1,2 or 3):")
+n_gram_value = int(input())
+
+while n_gram_value < 1 or n_gram_value > 3:
+    print("n-gram value (1,2 or 3):")
+    n_gram_value = int(input())
+
 print("smoothing value (between 0 and 1):")
 smoothing_value = float(input())
 
@@ -32,22 +40,73 @@ while smoothing_value < 0 or smoothing_value > 1:
     print("smoothing value (between 0 and 1):")
     smoothing_value = float(input())
 
+def n_gram(n_input, tweet_string):
+    n_grams = []
+
+    spaced = ''
+    for ch in tweet_string:
+        spaced = spaced + ch + ' '
+
+    tokenized = spaced.split(" ")
+
+    if n_input == 1:
+        for i in tokenized:
+            n_grams.append((''.join([w + '' for w in i])).strip())
+
+        n_grams = [x for x in n_grams if "*" not in x and len(x) is 1]
+
+    elif n_input == 2:
+
+        myList = list(nltk.bigrams(tokenized))
+
+        for i in myList:
+            n_grams.append((''.join([w + '' for w in i])).strip())
+
+        n_grams = [x for x in n_grams if "*" not in x and len(x) is 2]
+    elif n_input == 3:
+
+        myList = list(nltk.trigrams(tokenized))
+
+        for i in myList:
+            n_grams.append((''.join([w + '' for w in i])).strip())
+
+        n_grams = [x for x in n_grams if "*" not in x and len(x) is 3]
+
+    return n_grams
+
+
 def pre_process_tweets(tweet):
     tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
     tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
 
     if voc_value == 2:
-        tweet = ''.join(c if c.isalpha() else ' ' for c in tweet) # isalpha
+        tweet = ''.join(c if c.isalpha() or c is ' ' else '*' for c in tweet ) # replace if not isalpha
 
     elif voc_value == 1 or voc_value == 0:
-        tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
-        tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '', tweet)  # remove certain special characters
-        tweet = re.sub(r'\w*\d\w*', '', tweet)  # remove strings containing numbers
+        #tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
+        tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '*', tweet)  # replace special characters
+        tweet = re.sub('[0-9]', '*', tweet)  # remove strings containing numbers
         if voc_value == 0:
             tweet = tweet.lower()  # transform all characters to lowercase
 
 
     tweet = word_tokenize(tweet)  # separate into individual words
+
+    tweet = [x for x in tweet]
+
+    for tweet_string in tweet:
+
+        if "*" in tweet_string:
+
+            if tweet_string[0] is not "*" and tweet_string[len(tweet_string)-1] is not "*":
+
+                return n_gram(n_gram_value, tweet_string)
+
+    tweet = [x.replace('*', '') for x in tweet]
+
+    tweet = [x for x in tweet if x]
+
+
     return tweet
 
 def trunc_at_tweet(s, d, n):
@@ -70,27 +129,27 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
             basque_c += 1
             basque_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
-            # if tweet is in catalan
+        # if tweet is in catalan
         elif trunc_at_language(message, "	", 2) == "ca":
             catalan_c += 1
             catalan_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
-            # if tweet is in galician
+        # if tweet is in galician
         elif trunc_at_language(message, "	", 2) == "gl":
             galician_c += 1
             galician_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
-            # if tweet is in spanish
+        # if tweet is in spanish
         elif trunc_at_language(message, "	", 2) == "es":
             spanish_c += 1
             spanish_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
-            # if tweet is in english
+        # if tweet is in english
         elif trunc_at_language(message, "	", 2) == "en":
             english_c += 1
             english_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
 
-            # if tweet is in portugese
+        # if tweet is in portugese
         elif trunc_at_language(message, "	", 2) == "pt":
             portugese_c += 1
             portugese_v.extend(pre_process_tweets(trunc_at_tweet(message, "	", 3)))
