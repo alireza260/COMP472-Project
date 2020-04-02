@@ -175,6 +175,11 @@ if os.path.exists("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + st
     with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as trace_output_file:
         trace_output_file.write("")
 
+# if eval file already exists, wipe the data before appending new data
+if os.path.exists("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
+    with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as eval_output_file:
+        eval_output_file.write("")
+
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     try:
         for line in testing_file:
@@ -242,6 +247,11 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
         pass
 
     print("score:", accuracy_score, "/", nb_of_tweets_testing)
+
+with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as eval_output_file:
+    eval_output_file.write(str(accuracy_score/nb_of_tweets_testing) + "\n")
+
+
 
 #print("basque vocabulary: ",basque_v)
 #print("catalan vocabulary: ", catalan_v)
