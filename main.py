@@ -107,22 +107,7 @@ def pre_process_tweets(tweet):
             tweet = tweet.lower()  # transform all characters to lowercase
 
 
-    tweet = word_tokenize(tweet)  # separate into individual words
-
-    tweet = [x for x in tweet]
-
-    for tweet_string in tweet:
-
-        if "*" in tweet_string:
-
-            if tweet_string[0] is not "*" and tweet_string[len(tweet_string)-1] is not "*":
-
-                return n_gram(n_gram_value, tweet_string)
-
-    tweet = [x.replace('*', '') for x in tweet]
-
-    tweet = [x for x in tweet if x]
-
+    tweet = n_gram(n_gram_value, tweet)
 
     return tweet
 
