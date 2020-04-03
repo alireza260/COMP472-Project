@@ -13,7 +13,23 @@ spanish_v = []
 english_v = []
 portugese_v = []
 
+#count of each language in training file
 basque_c = catalan_c = galician_c = spanish_c = english_c = portugese_c = 0
+
+#count of each language in testing file
+basque_nb = catalan_nb = galician_nb = spanish_nb = english_nb = portugese_nb = 0
+
+#true positive of each language
+basque_tp = catalan_tp = galician_tp = spanish_tp = english_tp = portugese_tp = 0
+
+#true negative of each language
+#basque_tn = catalan_tn = galician_tn = spanish_tn = english_tn = portugese_tn = 0
+
+#false positive of each language
+basque_fp = catalan_fp = galician_fp = spanish_fp = english_fp = portugese_fp = 0
+
+#false negative of each language
+basque_fn = catalan_fn = galician_fn = spanish_fn = english_fn = portugese_fn = 0
 
 nb_of_tweets = 0
 nb_of_tweets_testing = 0
@@ -180,6 +196,34 @@ if os.path.exists("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str
     with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as eval_output_file:
         eval_output_file.write("")
 
+
+def precision(true_positive, false_positive):
+
+    return (true_positive/ (true_positive + false_positive))
+
+def recall(true_positive, false_negative):
+
+    return (true_positive/ (true_positive + false_negative))
+
+def f1(true_positive, false_positive, false_negative):
+
+    prec = true_positive/ (true_positive + false_positive)
+
+    rec = true_positive/ (true_positive + false_negative)
+
+    return 2*(prec*rec)/(prec+rec)
+
+def macro_f1():
+    return (f1(basque_tp, basque_fp, basque_fn) + f1(catalan_tp, catalan_fp, catalan_fn) + f1(galician_tp, galician_fp, galician_fn) +
+           f1(spanish_tp, spanish_fp, spanish_fn) + f1(english_tp, english_fp, english_fn) + f1(portugese_tp, portugese_fp, portugese_fn))/6
+
+def w_a_f1():
+    return (basque_nb*f1(basque_tp, basque_fp, basque_fn) + catalan_nb*f1(catalan_tp, catalan_fp, catalan_fn) + galician_nb*f1(galician_tp, galician_fp, galician_fn) +
+           spanish_nb*f1(spanish_tp, spanish_fp, spanish_fn) + english_nb*f1(english_tp, english_fp, english_fn) +
+            portugese_nb*f1(portugese_tp, portugese_fp, portugese_fn))/nb_of_tweets_testing
+
+
+
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     try:
         for line in testing_file:
@@ -210,36 +254,138 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
             with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as trace_output_file:
 
+                if correct_l == "eu":
+                    basque_nb += 1
+                elif correct_l == "ca":
+                    catalan_nb += 1
+                elif correct_l == "gl":
+                    galician_nb += 1
+                elif correct_l == "es":
+                    spanish_nb += 1
+                elif correct_l == "en":
+                    english_nb += 1
+                elif correct_l == "pt":
+                    portugese_nb += 1
                 if most_probable_l == basque_prob:
                     if correct_l == "eu":
                         accuracy_score += 1
+                        basque_tp += 1
+
+                        #catalan_tn += 1
+                        #galician_tn += 1
+                        #spanish_tn += 1
+                        #english_tn += 1
+                        #portugese_tn += 1
+
                         right_or_wrong_a = "correct"
+
+                    else:
+                        basque_fp += 1
                     trace_output_file.write(tweet_ID + "  eu  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
-                elif most_probable_l == catalan_prob:
+
+                elif most_probable_l != basque_prob:
+                    if correct_l == "eu":
+                        basque_fn += 1
+
+                if most_probable_l == catalan_prob:
                     if correct_l == "ca":
                         accuracy_score += 1
+                        catalan_tp += 1
+
+                        #basque_tn += 1
+                        #galician_tn += 1
+                        #spanish_tn += 1
+                        #english_tn += 1
+                        #portugese_tn += 1
+
                         right_or_wrong_a = "correct"
+                    else:
+                        catalan_fp += 1
                     trace_output_file.write(tweet_ID + "  ca  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
-                elif most_probable_l == galician_prob:
+
+                elif most_probable_l != catalan_prob:
+                    if correct_l == "ca":
+                        catalan_fn += 1
+
+                if most_probable_l == galician_prob:
                     if correct_l == "gl":
                         accuracy_score += 1
+                        galician_tp += 1
+
+                        #basque_tn += 1
+                        #catalan_tn += 1
+                        #spanish_tn += 1
+                        #english_tn += 1
+                        #portugese_tn += 1
+
                         right_or_wrong_a = "correct"
+                    else:
+                        galician_fp += 1
                     trace_output_file.write(tweet_ID + "  gl  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
-                elif most_probable_l == spanish_prob:
+
+                elif most_probable_l != galician_prob:
+                    if correct_l == "gl":
+                        galician_fn += 1
+
+                if most_probable_l == spanish_prob:
                     if correct_l == "es":
                         accuracy_score += 1
+                        spanish_tp += 1
+
+                        #basque_tn += 1
+                        #catalan_tn += 1
+                        #galician_tn += 1
+                        #english_tn += 1
+                        #portugese_tn += 1
+
                         right_or_wrong_a = "correct"
+                    else:
+                        spanish_fp += 1
                     trace_output_file.write(tweet_ID + "  es  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
-                elif most_probable_l == english_prob:
+
+                elif most_probable_l != spanish_prob:
+                    if correct_l == "es":
+                        spanish_fn += 1
+
+                if most_probable_l == english_prob:
                     if correct_l == "en":
                         accuracy_score += 1
+                        english_tp += 1
+
+                        #basque_tn += 1
+                        #catalan_tn += 1
+                        #galician_tn += 1
+                        #spanish_tn += 1
+                        #portugese_tn += 1
+
                         right_or_wrong_a = "correct"
+                    else:
+                        english_fp += 1
                     trace_output_file.write(tweet_ID + "  en  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
-                elif most_probable_l == portugese_prob:
+
+                elif most_probable_l != english_prob:
+                    if correct_l == "en":
+                        english_fn += 1
+
+                if most_probable_l == portugese_prob:
                     if correct_l == "pt":
                         accuracy_score += 1
+                        portugese_tp += 1
+
+                        #basque_tn += 1
+                        #catalan_tn += 1
+                        #galician_tn += 1
+                        #spanish_tn += 1
+                        #english_tn += 1
+
                         right_or_wrong_a = "correct"
+                    else:
+                        portugese_fp += 1
                     trace_output_file.write(tweet_ID + "  pt  " + str(most_probable_l) + "  " + correct_l + "  " + right_or_wrong_a + "\n")
+
+                elif most_probable_l != portugese_prob:
+                    if correct_l == "pt":
+                        portugese_fn += 1
 
                 print(nb_of_tweets_testing)
 
@@ -250,6 +396,19 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
 with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as eval_output_file:
     eval_output_file.write(str(accuracy_score/nb_of_tweets_testing) + "\n")
+
+    eval_output_file.write(str(precision(basque_tp, basque_fp)) + "  " + str(precision(catalan_tp, catalan_fp)) + "  " + str(precision(galician_tp, galician_fp)) + "  " +
+                           str(precision(spanish_tp, spanish_fp)) + "  " + str(precision(english_tp, english_fp)) + "  " + str(precision(portugese_tp, portugese_fp)) + "\n")
+
+    eval_output_file.write(str(recall(basque_tp, basque_fn)) + "  " + str(recall(catalan_tp, catalan_fn)) + "  " + str(recall(galician_tp, galician_fn)) + "  " +
+        str(recall(spanish_tp, spanish_fn)) + "  " + str(recall(english_tp, english_fn)) + "  " + str(recall(portugese_tp, portugese_fn)) + "\n")
+
+    eval_output_file.write(str(f1(basque_tp, basque_fp, basque_fn)) + "  " + str(f1(catalan_tp, catalan_fp, catalan_fn)) + "  " + str(f1(galician_tp, galician_fp, galician_fn)) + "  " +
+        str(f1(spanish_tp, spanish_fp, spanish_fn)) + "  " + str(f1(english_tp, english_fp, english_fn)) + "  " + str(f1(portugese_tp, portugese_fp, portugese_fn)) + "\n")
+
+    eval_output_file.write(str(macro_f1()) + "  " + str(w_a_f1()))
+
+
 
 
 
