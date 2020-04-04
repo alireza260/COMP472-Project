@@ -159,6 +159,13 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
     total_v = basque_v + catalan_v + galician_v + spanish_v + english_v + portugese_v
     total_unique = Counter(total_v)
 
+    counter_basque = Counter(basque_v)
+    counter_catalan = Counter(catalan_v)
+    counter_galician = Counter(galician_v)
+    counter_spanish = Counter(spanish_v)
+    counter_english = Counter(english_v)
+    counter_portugese = Counter(portugese_v)
+
     #set prior probability values
     basque_prior = np.log10(basque_c / nb_of_tweets)
     catalan_prior = np.log10(catalan_c / nb_of_tweets)
@@ -167,9 +174,29 @@ with open('training-tweets.txt', encoding="utf8") as training_file:
     english_prior = np.log10(english_c / nb_of_tweets)
     portugese_prior = np.log10(portugese_c / nb_of_tweets)
 
-def calc_language_prob(vocabulary, t_element, total_unique):
+def calc_language_prob_basque(vocabulary, t_element):
 
-    return np.log10((vocabulary.count(t_element) + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+    return np.log10((counter_basque[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+
+def calc_language_prob_catalan(vocabulary, t_element):
+
+    return np.log10((counter_catalan[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+
+def calc_language_prob_galician(vocabulary, t_element):
+
+    return np.log10((counter_galician[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+
+def calc_language_prob_spanish(vocabulary, t_element):
+
+    return np.log10((counter_spanish[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+
+def calc_language_prob_english(vocabulary, t_element):
+
+    return np.log10((counter_english[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
+
+def calc_language_prob_portugese(vocabulary, t_element):
+
+    return np.log10((counter_portugese[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
 
 # if trace file already exists, wipe the data before appending new data
 if os.path.exists("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
@@ -228,12 +255,12 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
             portugese_prob = portugese_prior
 
             for x in message:
-                basque_prob += calc_language_prob(basque_v, x, total_unique)
-                catalan_prob += calc_language_prob(catalan_v, x, total_unique)
-                galician_prob += calc_language_prob(galician_v, x, total_unique)
-                spanish_prob += calc_language_prob(spanish_v, x, total_unique)
-                english_prob += calc_language_prob(english_v, x, total_unique)
-                portugese_prob += calc_language_prob(portugese_v, x, total_unique)
+                basque_prob += calc_language_prob_basque(basque_v, x)
+                catalan_prob += calc_language_prob_catalan(catalan_v, x)
+                galician_prob += calc_language_prob_galician(galician_v, x)
+                spanish_prob += calc_language_prob_spanish(spanish_v, x)
+                english_prob += calc_language_prob_english(english_v, x)
+                portugese_prob += calc_language_prob_portugese(portugese_v, x)
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
