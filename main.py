@@ -234,6 +234,15 @@ def w_a_f1():
            spanish_nb*f1(spanish_tp, spanish_fp, spanish_fn) + english_nb*f1(english_tp, english_fp, english_fn) +
             portugese_nb*f1(portugese_tp, portugese_fp, portugese_fn))/nb_of_tweets_testing
 
+def containsAccents(element_list):
+    try:
+        for x in element_list:
+            x.encode(encoding='utf-8').decode('ascii')
+    except UnicodeDecodeError:
+        return True
+    else:
+        return False
+
 
 
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
@@ -261,6 +270,9 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                 spanish_prob += calc_language_prob_spanish(spanish_v, x)
                 english_prob += calc_language_prob_english(english_v, x)
                 portugese_prob += calc_language_prob_portugese(portugese_v, x)
+
+            if containsAccents(message):
+                english_prob = float("-inf")
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
