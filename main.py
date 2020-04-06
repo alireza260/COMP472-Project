@@ -1,9 +1,7 @@
 import nltk
 import os
 import numpy as np
-from nltk.tokenize import word_tokenize
 from collections import Counter
-import string
 import re
 
 basque_v = []
@@ -39,7 +37,6 @@ accuracy_score = 0
 BYOM_bool = False
 
 tracefile = ""
-
 evalfile = ""
 
 print("do you want the BYOM? (y or n)")
@@ -114,7 +111,6 @@ def n_gram(n_input, tweet_string):
 
     return n_grams
 
-
 def pre_process_tweets(tweet):
     if BYOM_bool:
         tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
@@ -129,7 +125,6 @@ def pre_process_tweets(tweet):
         tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '*', tweet)  # replace special characters
         if voc_value == 0:
             tweet = tweet.lower()  # transform all characters to lowercase
-
 
     tweet = n_gram(n_gram_value, tweet)
 
@@ -232,7 +227,6 @@ if os.path.exists(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + st
     with open(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as eval_output_file:
         eval_output_file.write("")
 
-
 def precision(true_positive, false_positive):
 
     return (true_positive/ (true_positive + false_positive))
@@ -270,8 +264,6 @@ def containsAccents(element_list):
     else:
         return False
 
-
-
 with open('test-tweets-given.txt', encoding="utf8") as testing_file:
     try:
         for line in testing_file:
@@ -298,12 +290,10 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                 english_prob += calc_language_prob_english(english_v, x)
                 portugese_prob += calc_language_prob_portugese(portugese_v, x)
 
-            if containsAccents(message) is True:
+            if BYOM_bool and containsAccents(message) is True:
                 english_prob = float("-inf")
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
-
-
 
             with open(tracefile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as trace_output_file:
 
@@ -324,12 +314,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                         accuracy_score += 1
                         basque_tp += 1
 
-                        #catalan_tn += 1
-                        #galician_tn += 1
-                        #spanish_tn += 1
-                        #english_tn += 1
-                        #portugese_tn += 1
-
                         right_or_wrong_a = "correct"
 
                     else:
@@ -345,12 +329,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                         accuracy_score += 1
                         catalan_tp += 1
 
-                        #basque_tn += 1
-                        #galician_tn += 1
-                        #spanish_tn += 1
-                        #english_tn += 1
-                        #portugese_tn += 1
-
                         right_or_wrong_a = "correct"
                     else:
                         catalan_fp += 1
@@ -364,12 +342,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                     if correct_l == "gl":
                         accuracy_score += 1
                         galician_tp += 1
-
-                        #basque_tn += 1
-                        #catalan_tn += 1
-                        #spanish_tn += 1
-                        #english_tn += 1
-                        #portugese_tn += 1
 
                         right_or_wrong_a = "correct"
                     else:
@@ -385,12 +357,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                         accuracy_score += 1
                         spanish_tp += 1
 
-                        #basque_tn += 1
-                        #catalan_tn += 1
-                        #galician_tn += 1
-                        #english_tn += 1
-                        #portugese_tn += 1
-
                         right_or_wrong_a = "correct"
                     else:
                         spanish_fp += 1
@@ -405,12 +371,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                         accuracy_score += 1
                         english_tp += 1
 
-                        #basque_tn += 1
-                        #catalan_tn += 1
-                        #galician_tn += 1
-                        #spanish_tn += 1
-                        #portugese_tn += 1
-
                         right_or_wrong_a = "correct"
                     else:
                         english_fp += 1
@@ -424,12 +384,6 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                     if correct_l == "pt":
                         accuracy_score += 1
                         portugese_tp += 1
-
-                        #basque_tn += 1
-                        #catalan_tn += 1
-                        #galician_tn += 1
-                        #spanish_tn += 1
-                        #english_tn += 1
 
                         right_or_wrong_a = "correct"
                     else:
@@ -460,14 +414,3 @@ with open(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smooth
         str(f1(spanish_tp, spanish_fp, spanish_fn)) + "  " + str(f1(english_tp, english_fp, english_fn)) + "  " + str(f1(portugese_tp, portugese_fp, portugese_fn)) + "\n")
 
     eval_output_file.write(str(macro_f1()) + "  " + str(w_a_f1()))
-
-
-
-
-
-#print("basque vocabulary: ",basque_v)
-#print("catalan vocabulary: ", catalan_v)
-#print("galician vocabulary: ", galician_v)
-#print("spanish vocabulary: ", spanish_v)
-#print("english vocabulary: ", english_v)
-#print("portugese vocabulary: ", portugese_v)
