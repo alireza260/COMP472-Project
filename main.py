@@ -36,6 +36,25 @@ nb_of_tweets_testing = 0
 
 accuracy_score = 0
 
+BYOM_bool = False
+
+tracefile = ""
+
+evalfile = ""
+
+print("do you want the BYOM? (y or n)")
+BYOM_input = str(input())
+
+if BYOM_input == "n":
+    BYOM_bool = False
+    tracefile = "trace_"
+    evalfile = "eval_"
+
+elif BYOM_input == "y":
+    BYOM_bool = True
+    tracefile = "trace_myModel_"
+    evalfile = "eval_myModel_"
+
 print("vocabulary value (0,1 or 2):")
 voc_value = int(input())
 
@@ -93,8 +112,9 @@ def n_gram(n_input, tweet_string):
 
 
 def pre_process_tweets(tweet):
-    tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
-    tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
+    if BYOM_bool:
+        tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
+        tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
 
     if voc_value == 2:
         tweet = ''.join(c if c.isalpha() or c is ' ' else '*' for c in tweet ) # replace if not isalpha
@@ -276,7 +296,9 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
 
-            with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as trace_output_file:
+
+
+            with open(tracefile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as trace_output_file:
 
                 if correct_l == "eu":
                     basque_nb += 1
@@ -418,7 +440,7 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
 
     print("score:", accuracy_score, "/", nb_of_tweets_testing)
 
-with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as eval_output_file:
+with open(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "a", encoding="utf8") as eval_output_file:
     eval_output_file.write(str(accuracy_score/nb_of_tweets_testing) + "\n")
 
     eval_output_file.write(str(precision(basque_tp, basque_fp)) + "  " + str(precision(catalan_tp, catalan_fp)) + "  " + str(precision(galician_tp, galician_fp)) + "  " +
