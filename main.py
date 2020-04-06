@@ -119,6 +119,7 @@ def pre_process_tweets(tweet):
     if BYOM_bool:
         tweet = re.sub('((www\S+)|(http\S+))', '', tweet)  # remove URLs
         tweet = re.sub('@[^\s]+', '', tweet)  # remove usernames
+        tweet = re.sub('[0-9]', '*', tweet)  # remove elements containing numbers
 
     if voc_value == 2:
         tweet = ''.join(c if c.isalpha() or c is ' ' else '*' for c in tweet ) # replace if not isalpha
@@ -126,7 +127,6 @@ def pre_process_tweets(tweet):
     elif voc_value == 1 or voc_value == 0:
         #tweet = ''.join(c for c in tweet if c not in string.punctuation)  # remove punctuation
         tweet = re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)', '*', tweet)  # replace special characters
-        tweet = re.sub('[0-9]', '*', tweet)  # remove strings containing numbers
         if voc_value == 0:
             tweet = tweet.lower()  # transform all characters to lowercase
 

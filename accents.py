@@ -7,6 +7,6 @@ def containsAccents(element_list):
     else:
         return False
 
-listOfStrings = ['Hi' , 'hello', 'at', 'this', 'there', 'from']
+listOfStrings = ['Hi' , 'héllo', 'at', 'this', 'there', 'from']
 
 print(containsAccents(listOfStrings))
