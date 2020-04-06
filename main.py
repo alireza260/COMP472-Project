@@ -45,6 +45,10 @@ evalfile = ""
 print("do you want the BYOM? (y or n)")
 BYOM_input = str(input())
 
+while BYOM_input != "y" and BYOM_input != "n":
+    print("do you want the BYOM? (y or n)")
+    BYOM_input = str(input())
+
 if BYOM_input == "n":
     BYOM_bool = False
     tracefile = "trace_"
@@ -219,13 +223,13 @@ def calc_language_prob_portugese(vocabulary, t_element):
     return np.log10((counter_portugese[t_element] + smoothing_value) / (len(vocabulary) + smoothing_value*len(total_unique)))
 
 # if trace file already exists, wipe the data before appending new data
-if os.path.exists("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
-    with open("trace_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as trace_output_file:
+if os.path.exists(tracefile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
+    with open(tracefile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as trace_output_file:
         trace_output_file.write("")
 
 # if eval file already exists, wipe the data before appending new data
-if os.path.exists("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
-    with open("eval_" + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as eval_output_file:
+if os.path.exists(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt"):
+    with open(evalfile + str(voc_value) + "_" + str(n_gram_value) + "_" + str(smoothing_value) + ".txt", "w", encoding="utf8") as eval_output_file:
         eval_output_file.write("")
 
 
@@ -243,7 +247,10 @@ def f1(true_positive, false_positive, false_negative):
 
     rec = true_positive/ (true_positive + false_negative)
 
-    return 2*(prec*rec)/(prec+rec)
+    if (prec + rec) == 0:
+        return 0
+    else:
+        return 2*(prec*rec)/(prec+rec)
 
 def macro_f1():
     return (f1(basque_tp, basque_fp, basque_fn) + f1(catalan_tp, catalan_fp, catalan_fn) + f1(galician_tp, galician_fp, galician_fn) +
@@ -291,7 +298,7 @@ with open('test-tweets-given.txt', encoding="utf8") as testing_file:
                 english_prob += calc_language_prob_english(english_v, x)
                 portugese_prob += calc_language_prob_portugese(portugese_v, x)
 
-            if containsAccents(message):
+            if containsAccents(message) is True:
                 english_prob = float("-inf")
 
             most_probable_l = max(basque_prob,catalan_prob,galician_prob,spanish_prob,english_prob,portugese_prob)
