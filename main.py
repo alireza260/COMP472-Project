@@ -232,14 +232,22 @@ def precision(true_positive, false_positive):
     return (true_positive/ (true_positive + false_positive))
 
 def recall(true_positive, false_negative):
-
-    return (true_positive/ (true_positive + false_negative))
+    if (true_positive + false_negative) == 0:
+        return 0
+    else:
+        return (true_positive / (true_positive + false_negative))
 
 def f1(true_positive, false_positive, false_negative):
+    if (true_positive + false_positive) == 0:
+        prec = 0
 
-    prec = true_positive/ (true_positive + false_positive)
+    else:
+        prec = true_positive/ (true_positive + false_positive)
 
-    rec = true_positive/ (true_positive + false_negative)
+    if (true_positive + false_negative) == 0:
+        rec = 0
+    else:
+        rec = true_positive/ (true_positive + false_negative)
 
     if (prec + rec) == 0:
         return 0
